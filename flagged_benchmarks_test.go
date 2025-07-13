@@ -43,7 +43,7 @@ func helperRunBenchmarkIs[T bitFlags, TP ptrBitFlags[T]](b *testing.B) {
 			b.Run(tt.name, func(b *testing.B) {
 				b.ReportAllocs()
 				var f TP = &tt.initial
-				for b.Loop() {
+				for i := 0; i < b.N; i++ {
 					f.Is(tt.bitIndex)
 				}
 			})
@@ -96,7 +96,7 @@ func helperRunBenchmarkSet[T bitFlags, TP ptrBitFlags[T]](b *testing.B) {
 			b.Run(tt.name, func(b *testing.B) {
 				b.ReportAllocs()
 				var f TP = &tt.initial
-				for b.Loop() {
+				for i := 0; i < b.N; i++ {
 					f.Set(tt.bitIndex)
 				}
 			})
@@ -149,7 +149,7 @@ func helperRunBenchmarkToggle[T bitFlags, TP ptrBitFlags[T]](b *testing.B) {
 			b.Run(tt.name, func(b *testing.B) {
 				b.ReportAllocs()
 				var f TP = &tt.initial
-				for b.Loop() {
+				for i := 0; i < b.N; i++ {
 					f.Toggle(tt.bitIndex)
 				}
 			})
@@ -212,7 +212,7 @@ func helperRunBenchmarkAnyOf[T bitFlags, TP ptrBitFlags[T]](b *testing.B) {
 			b.Run(tt.name, func(b *testing.B) {
 				b.ReportAllocs()
 				var f TP = &tt.initial
-				for b.Loop() {
+				for i := 0; i < b.N; i++ {
 					f.AnyOf(tt.bitIndex...)
 				}
 			})
@@ -275,7 +275,7 @@ func helperRunBenchmarkAllOf[T bitFlags, TP ptrBitFlags[T]](b *testing.B) {
 			b.Run(tt.name, func(b *testing.B) {
 				b.ReportAllocs()
 				var f TP = &tt.initial
-				for b.Loop() {
+				for i := 0; i < b.N; i++ {
 					f.AllOf(tt.bitIndex...)
 				}
 			})
@@ -314,7 +314,7 @@ func helperRunBenchmarkString[T bitFlags, TP ptrBitFlags[T]](b *testing.B) {
 			b.Run(tt.name, func(b *testing.B) {
 				b.ReportAllocs()
 				var f TP = &tt.initial
-				for b.Loop() {
+				for i := 0; i < b.N; i++ {
 					f.String()
 				}
 			})
@@ -353,7 +353,7 @@ func helperRunBenchmarkPrettyString[T bitFlags, TP ptrBitFlags[T]](b *testing.B)
 			b.Run(tt.name, func(b *testing.B) {
 				b.ReportAllocs()
 				var f TP = &tt.initial
-				for b.Loop() {
+				for i := 0; i < b.N; i++ {
 					f.PrettyString()
 				}
 			})
@@ -387,7 +387,7 @@ func BenchmarkBitFlags_BitFlags(b *testing.B) {
 		for _, tt := range tests {
 			b.Run(tt.name, func(b *testing.B) {
 				b.ReportAllocs()
-				for b.Loop() {
+				for i := 0; i < b.N; i++ {
 					tt.initial.BitFlags()
 				}
 			})
@@ -411,7 +411,7 @@ func BenchmarkBitFlags_BitFlags(b *testing.B) {
 		for _, tt := range tests {
 			b.Run(tt.name, func(b *testing.B) {
 				b.ReportAllocs()
-				for b.Loop() {
+				for i := 0; i < b.N; i++ {
 					tt.initial.BitFlags()
 				}
 			})
@@ -435,7 +435,7 @@ func BenchmarkBitFlags_BitFlags(b *testing.B) {
 		for _, tt := range tests {
 			b.Run(tt.name, func(b *testing.B) {
 				b.ReportAllocs()
-				for b.Loop() {
+				for i := 0; i < b.N; i++ {
 					tt.initial.BitFlags()
 				}
 			})
@@ -459,7 +459,7 @@ func BenchmarkBitFlags_BitFlags(b *testing.B) {
 		for _, tt := range tests {
 			b.Run(tt.name, func(b *testing.B) {
 				b.ReportAllocs()
-				for b.Loop() {
+				for i := 0; i < b.N; i++ {
 					tt.initial.BitFlags()
 				}
 			})
