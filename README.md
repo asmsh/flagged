@@ -15,7 +15,7 @@ It’s ideal for scenarios where you need efficient and compact boolean state re
 * Unified interface: all exposed types implement a common BitFlags interface
 * Core bit operations, using only the bit index (normal integers, with no shifting required for inputs).
 * Pure Go implementation, no reflection, no dependencies, suitable for any application, in any environment.
-* Easy to use directly or as a backend for code generators (check `github.com/asmsh/flagged/cmd/genflagged`).
+* Easy to use directly or as a backend for code generators (check [genflagged](https://pkg.go.dev/github.com/asmsh/flagged/cmd/genflagged)).
 
 ### Installation:
 

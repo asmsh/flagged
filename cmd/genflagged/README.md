@@ -1,4 +1,4 @@
-### genflagged: a tool for generating compact, uint-backed bitflags types out of Go struct types containing bool fields.
+### genflagged: generates compact, uint-based bitflags types out of Go structs with bool fields.
 
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/asmsh/flagged/cmd/genflagged)](https://pkg.go.dev/github.com/asmsh/flagged/cmd/genflagged)
 [![Go Report Card](https://goreportcard.com/badge/github.com/asmsh/flagged/cmd/genflagged)](https://goreportcard.com/report/github.com/asmsh/flagged/cmd/genflagged)
@@ -7,7 +7,7 @@ It scans the struct type, selects the minimal underlying `uint` type (`uint8`, `
 
 The goal is to enable memory-efficient, type-safe, and readable flag representation without sacrificing performance or clarity.
 
-It uses the `github.com/asmsh/flagged` as the implementation for the bitflags access and modification.
+It uses the [github.com/asmsh/flagged](https://pkg.go.dev/github.com/asmsh/flagged) as the implementation for the bitflags access and modification.
 
 ### Features:
 
