@@ -3,7 +3,7 @@
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/asmsh/flagged)](https://pkg.go.dev/github.com/asmsh/flagged)
 [![Go Report Card](https://goreportcard.com/badge/github.com/asmsh/flagged)](https://goreportcard.com/report/github.com/asmsh/flagged)
 [![Tests](https://github.com/asmsh/flagged/workflows/Tests/badge.svg)](https://github.com/asmsh/flagged/actions)
-[![Go Coverage](https://github.com/asmsh/flagged/wiki/coverage.svg)](https://raw.githack.com/wiki/asmsh/sema/coverage.html)
+[![Go Coverage](https://github.com/asmsh/flagged/wiki/coverage.svg)](https://raw.githack.com/wiki/asmsh/flagged/coverage.html)
 
 It provides a minimal, extensible API for manipulating and inspecting compact bitflags, while remaining dependency-free and allocation-free.
 
