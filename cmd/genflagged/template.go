@@ -98,19 +98,15 @@ func (f *{{$OutTypeName}}) SetTypedFlags(flags {{$SourceTypeName}}) {
 func (f *{{$OutTypeName}}) Is{{$fv.Flag}}() (set bool) {
 	return f.BitFlags().Is(_{{$SourceTypeName}}{{$fv.Flag}}BitIndex)
 }
-
 func (f *{{$OutTypeName}}) Set{{$fv.Flag}}() (old bool) {
 	return f.Set{{$fv.Flag}}To(true)
 }
-
 func (f *{{$OutTypeName}}) Reset{{$fv.Flag}}() (old bool) {
 	return f.Set{{$fv.Flag}}To(false)
 }
-
 func (f *{{$OutTypeName}}) Set{{$fv.Flag}}To(new bool) (old bool) {
 	return f.BitFlags().SetTo(_{{$SourceTypeName}}{{$fv.Flag}}BitIndex, new)
 }
-
 func (f *{{$OutTypeName}}) Toggle{{$fv.Flag}}() (new bool) {
 	return f.BitFlags().Toggle(_{{$SourceTypeName}}{{$fv.Flag}}BitIndex)
 }
