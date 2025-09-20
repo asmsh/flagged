@@ -31,7 +31,8 @@ package {{.PackageName}}
 import "github.com/asmsh/flagged"
 `
 
-// TODO: add some string method that makes use of the field name.
+// TODO: add a new flag to use raw implementation without the 'github.com/asmsh/flagged' dep.
+// TODO: add a String method that makes use of the field name somehow.
 const flaggedTypeTemplate = `
 {{ $SourceTypeName := .SourceTypeName -}}
 {{ $OutTypeName := .OutTypeName -}}
@@ -49,23 +50,12 @@ type _{{.OutInterfaceName}} interface {
 
 {{range $fv := $FlagValues}}
 	Is{{$fv.Flag}}() (set bool)
-{{- end}}
-
-{{range $fv := $FlagValues}}
 	Set{{$fv.Flag}}() (old bool)
-{{- end}}
-
-{{range $fv := $FlagValues}}
 	Reset{{$fv.Flag}}() (old bool)
-{{- end}}
-
-{{range $fv := $FlagValues}}
 	Set{{$fv.Flag}}To(new bool) (old bool)
-{{- end}}
-
-{{range $fv := $FlagValues}}
 	Toggle{{$fv.Flag}}() (new bool)
-{{- end}}
+{{end}}
+
 }
 
 // These are the indexes of the flags used by this generated code.
@@ -104,27 +94,24 @@ func (f *{{$OutTypeName}}) SetTypedFlags(flags {{$SourceTypeName}}) {
 {{- end}}
 }
 
-{{range $fv := $FlagValues}}func (f *{{$OutTypeName}}) Is{{$fv.Flag}}() (set bool) {
+{{range $fv := $FlagValues}}
+func (f *{{$OutTypeName}}) Is{{$fv.Flag}}() (set bool) {
 	return f.BitFlags().Is(_{{$SourceTypeName}}{{$fv.Flag}}BitIndex)
 }
-{{end}}
 
-{{range $fv := $FlagValues}}func (f *{{$OutTypeName}}) Set{{$fv.Flag}}() (old bool) {
+func (f *{{$OutTypeName}}) Set{{$fv.Flag}}() (old bool) {
 	return f.Set{{$fv.Flag}}To(true)
 }
-{{end}}
 
-{{range $fv := $FlagValues}}func (f *{{$OutTypeName}}) Reset{{$fv.Flag}}() (old bool) {
+func (f *{{$OutTypeName}}) Reset{{$fv.Flag}}() (old bool) {
 	return f.Set{{$fv.Flag}}To(false)
 }
-{{end}}
 
-{{range $fv := $FlagValues}}func (f *{{$OutTypeName}}) Set{{$fv.Flag}}To(new bool) (old bool) {
+func (f *{{$OutTypeName}}) Set{{$fv.Flag}}To(new bool) (old bool) {
 	return f.BitFlags().SetTo(_{{$SourceTypeName}}{{$fv.Flag}}BitIndex, new)
 }
-{{end}}
 
-{{range $fv := $FlagValues}}func (f *{{$OutTypeName}}) Toggle{{$fv.Flag}}() (new bool) {
+func (f *{{$OutTypeName}}) Toggle{{$fv.Flag}}() (new bool) {
 	return f.BitFlags().Toggle(_{{$SourceTypeName}}{{$fv.Flag}}BitIndex)
 }
 {{end}}
