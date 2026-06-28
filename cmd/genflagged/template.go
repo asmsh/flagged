@@ -96,7 +96,7 @@ func (f *{{$OutTypeName}}) SetTypedFlags(flags {{$SourceTypeName}}) {
 
 {{range $fv := $FlagValues}}
 func (f *{{$OutTypeName}}) Is{{$fv.Flag}}() (set bool) {
-	return f.BitFlags().Is(_{{$SourceTypeName}}{{$fv.Flag}}BitIndex)
+	return *f&(1<<_{{$SourceTypeName}}{{$fv.Flag}}BitIndex) != 0
 }
 func (f *{{$OutTypeName}}) Set{{$fv.Flag}}() (old bool) {
 	return f.Set{{$fv.Flag}}To(true)
@@ -105,10 +105,17 @@ func (f *{{$OutTypeName}}) Reset{{$fv.Flag}}() (old bool) {
 	return f.Set{{$fv.Flag}}To(false)
 }
 func (f *{{$OutTypeName}}) Set{{$fv.Flag}}To(new bool) (old bool) {
-	return f.BitFlags().SetTo(_{{$SourceTypeName}}{{$fv.Flag}}BitIndex, new)
+	old = *f&(1<<_{{$SourceTypeName}}{{$fv.Flag}}BitIndex) != 0
+	if new {
+		*f |= 1 << _{{$SourceTypeName}}{{$fv.Flag}}BitIndex
+	} else {
+		*f &^= 1 << _{{$SourceTypeName}}{{$fv.Flag}}BitIndex
+	}
+	return
 }
 func (f *{{$OutTypeName}}) Toggle{{$fv.Flag}}() (new bool) {
-	return f.BitFlags().Toggle(_{{$SourceTypeName}}{{$fv.Flag}}BitIndex)
+	*f ^= 1 << _{{$SourceTypeName}}{{$fv.Flag}}BitIndex
+	return *f&(1<<_{{$SourceTypeName}}{{$fv.Flag}}BitIndex) != 0
 }
 {{end}}
 `
