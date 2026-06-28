@@ -7,6 +7,10 @@ package flagged
 // If the value is outside [BitFlags] range, the methods will panic.
 // The allowed range is [0, [BitFlags.Size]-1].
 //
+// Indexes are counted from the least significant bit, so index 0
+// refers to the least significant bit, and index [BitFlags.Size]-1
+// refers to the most significant bit.
+//
 // Example:
 //
 //	 const (
@@ -81,6 +85,10 @@ type BitFlags interface {
 	// String returns the binary representation of this [BitFlags] value,
 	// formatted like fmt's %b verb, but with leading zeros to preserve
 	// the full bit width of the underlying type (Size).
+	//
+	// The bits are printed most-significant-first, matching fmt's %b verb,
+	// so the bit at [BitIndex] 0 (the least significant bit) is the
+	// rightmost character, and the bit at index Size-1 is the leftmost.
 	String() string
 
 	// PrettyString returns a human-readable binary representation of
