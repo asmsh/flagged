@@ -373,7 +373,18 @@ type File struct {
 // Returns all variants (such as tests) of the package.
 func loadPackages(in *input) []*Package {
 	cfg := &packages.Config{
-		Mode: packages.LoadSyntax,
+		// LoadAllSyntax (LoadSyntax | NeedDeps) type-checks the whole import
+		// graph from source.
+		// We can't use the cheaper LoadSyntax: without NeedDeps, go/packages
+		// loads the target's dependencies from compiler export data instead
+		// of the source, and that export-data format is bumped by the Go
+		// toolchain over time.
+		// x/tools only decodes versions up to the release it shipped with,
+		// so running under a newer toolchain than our x/tools fails to read
+		// a dep's types and aborts with "package <dep> without types was imported from <pkg>".
+		// NeedDeps sidesteps export data entirely, making genflagged robust
+		// across Go versions (at the cost of being slower).
+		Mode: packages.LoadAllSyntax,
 		// Tests are included, let the caller decide how to fold them in.
 		Tests:      true,
 		BuildFlags: []string{fmt.Sprintf("-tags=%s", in.buildTags)},
