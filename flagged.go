@@ -102,6 +102,13 @@ type BitFlags interface {
 	PrettyString() string
 }
 
+var (
+	_ BitFlags = (*BitFlags8)(nil)
+	_ BitFlags = (*BitFlags16)(nil)
+	_ BitFlags = (*BitFlags32)(nil)
+	_ BitFlags = (*BitFlags64)(nil)
+)
+
 // New is a helper function for creating pointer to one of the BitFlags types.
 // It's useful for returning a value that implements the [BitFlags] interface.
 func New[T BitFlags8 | BitFlags16 | BitFlags32 | BitFlags64](f T) *T {
@@ -177,32 +184,46 @@ type bitFlags interface {
 	Size() int
 }
 
+type bitFlagsTypes interface {
+	BitFlags8 | BitFlags16 | BitFlags32 | BitFlags64 |
+		uint8 | uint16 | uint32 | uint64
+}
+
 func validateBitIndex(size int, idx BitIndex) {
-	if idx < 0 || idx >= size {
-		// print a helpful panic message without using fmt or strconv.
-		strLen := 30 // of "index -00 out of range [0..00]"
-		panicStr := make(stringBuilder, 0, strLen)
-		panicStr.WriteString("index ")
-
-		// only print the idx if it's between -nSmalls and nSmalls.
-		if -nSmalls < idx && idx < nSmalls { // 2-digit number
-			if idx < 0 {
-				idx = -idx
-				panicStr.WriteByte('-')
-			}
-			panicStr.WriteString(small(idx))
-			panicStr.WriteByte(' ')
-		}
-
-		panicStr.WriteString("out of range [0..")
-		panicStr.WriteString(sizeIndexString(size))
-		panicStr.WriteString("]")
-		panic(panicStr.String())
+	if idx >= 0 && idx < size {
+		return
 	}
+	validateBitIndexSlow(size, idx)
+}
+
+func validateBitIndexSlow(size int, idx BitIndex) {
+	// print a helpful panic message without using fmt or strconv.
+	strLen := 30 // of "index -00 out of range [0..00]"
+	panicStr := make(stringBuilder, 0, strLen)
+	panicStr.WriteString("index ")
+
+	// only print the idx if it's between -nSmalls and nSmalls.
+	if -nSmalls < idx && idx < nSmalls { // 2-digit number
+		if idx < 0 {
+			idx = -idx
+			panicStr.WriteByte('-')
+		}
+		panicStr.WriteString(small(idx))
+		panicStr.WriteByte(' ')
+	}
+
+	panicStr.WriteString("out of range [0..")
+	panicStr.WriteString(sizeIndexString(size))
+	panicStr.WriteString("]")
+	panic(panicStr.String())
 }
 
 func is[T bitFlags](f T, idx BitIndex) (set bool) {
 	validateBitIndex(f.Size(), idx)
+	return isUint(f, idx)
+}
+
+func isUint[T bitFlagsTypes](f T, idx BitIndex) (set bool) {
 	return (f & (1 << idx)) != 0
 }
 
@@ -236,6 +257,10 @@ func anySet[T bitFlags](f T, idx ...BitIndex) bool {
 	if len(idx) == 0 {
 		return f != T(0)
 	}
+	return anySetSlow(f, idx...)
+}
+
+func anySetSlow[T bitFlags](f T, idx ...BitIndex) bool {
 	size := f.Size()
 	foundSet := false
 	for _, bi := range idx {
@@ -251,6 +276,10 @@ func allSet[T bitFlags](f T, idx ...BitIndex) bool {
 	if len(idx) == 0 {
 		return f == ^T(0)
 	}
+	return allSetSlow(f, idx...)
+}
+
+func allSetSlow[T bitFlags](f T, idx ...BitIndex) bool {
 	size := f.Size()
 	foundUnset := true
 	for _, bi := range idx {
