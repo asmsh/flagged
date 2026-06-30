@@ -112,6 +112,12 @@
 // The -trimprefix and -trimsuffix flags specifies a prefix and suffix to be
 // removed from each bool field's name, in each source type in the -type flag,
 // before it's used to generated the different methods.
+//
+// The -raw flag generates self-contained code that doesn't import the
+// github.com/asmsh/flagged package. The generated type is defined directly
+// as the matching uint type (uint8, uint16, uint32 or uint64) instead of a
+// flagged.BitFlags type, and the BitFlags method is omitted, since it returns
+// a flagged.BitFlags value. All other methods are generated as usual.
 package main
 
 import (
@@ -141,10 +147,12 @@ var (
 
 	buildTagsFlag = flag.String("tags", "", "comma-separated list of build tags to apply")
 
+	rawFlag = flag.Bool("raw", false, "generate self-contained code that doesn't import 'github.com/asmsh/flagged'; omits the BitFlags method")
+
 	verboseFlag = flag.Bool("verbose", false, "enable detailed logging during execution, including while loading packages")
 
 	// TODO: add a flag to generate tests for the generated types (maybe only if outfile is a test file)
-	// TODO: adda flag to generate benchmarks for the generated types.
+	// TODO: add a flag to generate benchmarks for the generated types.
 )
 
 // Usage is a replacement usage function for the flags package.
@@ -208,6 +216,7 @@ func main() {
 	for _, pkg := range pkgs {
 		g := Generator{
 			pkg: pkg,
+			raw: in.raw,
 		}
 
 		verbose.Printf(
@@ -341,6 +350,7 @@ func main() {
 type Generator struct {
 	buf bytes.Buffer // Accumulated output.
 	pkg *Package     // Package we are scanning.
+	raw bool         // Generate self-contained code without the flagged dependency.
 }
 
 type Package struct {
@@ -456,6 +466,7 @@ func (g *Generator) generateHeader(headerTmpl *template.Template) {
 	headerInput := templateHeaderInput{
 		CmdArgs:     strings.Join(os.Args[1:], " "),
 		PackageName: g.pkg.name,
+		Raw:         g.raw,
 	}
 	if err := headerTmpl.Execute(&g.buf, headerInput); err != nil {
 		log.Fatalf("error: failed to generate header: %s", err)
@@ -493,11 +504,24 @@ func (g *Generator) generateForStruct(
 		size = g.pkg.flagsSize
 	}
 
+	// In raw mode the generated code is self-contained: the underlying type
+	// is a plain uint and bit indexes are plain ints, so nothing from the
+	// flagged package is referenced.
+	underlyingType := fmt.Sprintf("uint%d", size)
+	bitIndexType := "int"
+	if !g.raw {
+		underlyingType = fmt.Sprintf("flagged.BitFlags%d", size)
+		bitIndexType = "flagged.BitIndex"
+	}
+
 	tmplInput := templateTypeInput{
 		SourceTypeName:   sourceTypeName,
 		OutTypeName:      outTypeName,
 		OutTypeSize:      size,
 		OutInterfaceName: outTypeName + "Interface",
+		UnderlyingType:   underlyingType,
+		BitIndexType:     bitIndexType,
+		Raw:              g.raw,
 		FlagValues:       structFile.flagValues,
 	}
 	if err := bodyTmpl.Execute(&g.buf, tmplInput); err != nil {

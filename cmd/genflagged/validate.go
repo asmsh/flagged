@@ -16,6 +16,7 @@ type input struct {
 	trimPrefix      string
 	trimSuffix      string
 	flagsSize       int
+	raw             bool
 
 	outFile string
 	outDir  string
@@ -75,6 +76,7 @@ func validateFlags() *input {
 		trimPrefix:      *trimprefixFlag,
 		trimSuffix:      *trimsuffixFlag,
 		flagsSize:       *sizeFlag,
+		raw:             *rawFlag,
 		outFile:         *outFileFlag,
 		outDir:          outputDir,
 		buildTags:       *buildTagsFlag,
