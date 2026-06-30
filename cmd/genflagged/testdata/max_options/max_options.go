@@ -2,7 +2,7 @@ package max_options
 
 //go:generate genflagged -type=MaxOptions -outFile=max_options_flagged.go
 type MaxOptions struct {
-	bool
+	bool // won't be generated.
 
 	Flag0, Flag1, Flag2, Flag3, Flag4,
 	Flag5, Flag6, Flag7, Flag8, Flag9 bool
