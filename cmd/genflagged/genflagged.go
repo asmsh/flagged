@@ -118,6 +118,13 @@
 // as the matching uint type (uint8, uint16, uint32 or uint64) instead of a
 // flagged.BitFlags type, and the BitFlags method is omitted, since it returns
 // a flagged.BitFlags value. All other methods are generated as usual.
+//
+// The -tests flag additionally generates a companion _test.go file next to
+// the output, containing table-driven tests that exercise the generated
+// methods for each type (the per-flag Is/Set/Reset/SetTo/Toggle accessors, the
+// TypedFlags/SetTypedFlags round-trip, and Clone). The generated tests use
+// only the standard library and the generated methods, so they compile in
+// both normal and -raw mode.
 package main
 
 import (
@@ -149,9 +156,10 @@ var (
 
 	rawFlag = flag.Bool("raw", false, "generate self-contained code that doesn't import 'github.com/asmsh/flagged'; omits the BitFlags method")
 
+	testsFlag = flag.Bool("tests", false, "also generate a companion _test.go file with tests for the generated types")
+
 	verboseFlag = flag.Bool("verbose", false, "enable detailed logging during execution, including while loading packages")
 
-	// TODO: add a flag to generate tests for the generated types (maybe only if outfile is a test file)
 	// TODO: add a flag to generate benchmarks for the generated types.
 )
 
@@ -190,6 +198,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("error: internal: failed to load type template: %s", err)
 	}
+	testHeaderTmpl, err := template.New("testHeader").Parse(flaggedTestHeaderTemplate)
+	if err != nil {
+		log.Fatalf("error: internal: failed to load test header template: %s", err)
+	}
+	testBodyTmpl, err := template.New("testBody").Parse(flaggedTestTypeTemplate)
+	if err != nil {
+		log.Fatalf("error: internal: failed to load test type template: %s", err)
+	}
 
 	// For each type, generate code in the first package where the type is declared.
 	// The order of packages is as follows:
@@ -215,17 +231,18 @@ func main() {
 	})
 	for _, pkg := range pkgs {
 		g := Generator{
-			pkg: pkg,
-			raw: in.raw,
+			pkg:   pkg,
+			raw:   in.raw,
+			tests: in.genTests,
 		}
 
 		verbose.Printf(
-			"info: processing pacakge %s with %d remaining types\n",
+			"info: processing package %s with %d remaining types\n",
 			pkg.name,
 			len(in.sourceTypeNames),
 		)
 
-		g.generateHeader(headerTmpl)
+		g.generateHeader(headerTmpl, testHeaderTmpl)
 
 		// Run generate for types that can be found. Keep the rest for the remainingTypes iteration.
 		var foundTypes, remainingTypes []string
@@ -237,14 +254,14 @@ func main() {
 				if outTypeName == "_" {
 					outTypeName = ""
 					verbose.Printf(
-						"info: skip specified out type name %s for source type %s while processing pacakge %s\n",
+						"info: skip specified out type name %s for source type %s while processing package %s\n",
 						outTypeName,
 						sourceTypeName,
 						pkg.name,
 					)
 				} else {
 					verbose.Printf(
-						"info: using specified out type name %s for source type %s while processing pacakge %s\n",
+						"info: using specified out type name %s for source type %s while processing package %s\n",
 						outTypeName,
 						sourceTypeName,
 						pkg.name,
@@ -256,7 +273,7 @@ func main() {
 				outTypeName = defaultOutTypeName(sourceTypeName)
 
 				verbose.Printf(
-					"info: using generated out type name %s for source type %s while processing pacakge %s\n",
+					"info: using generated out type name %s for source type %s while processing package %s\n",
 					outTypeName,
 					sourceTypeName,
 					pkg.name,
@@ -276,7 +293,7 @@ func main() {
 					)
 				}
 
-				g.generateForStruct(sourceTypeName, outTypeName, bodyTmpl, file)
+				g.generateForStruct(sourceTypeName, outTypeName, bodyTmpl, testBodyTmpl, file)
 				foundTypes = append(foundTypes, sourceTypeName)
 			} else {
 				remainingTypes = append(remainingTypes, sourceTypeName)
@@ -285,12 +302,12 @@ func main() {
 
 		// Skip writing the file if not matching types are found in the current package.
 		if n := len(foundTypes); n == 0 {
-			verbose.Printf("info: no matching types found in pacakge %s\n", pkg.name)
+			verbose.Printf("info: no matching types found in package %s\n", pkg.name)
 
 			continue
 		} else {
 			verbose.Printf(
-				"info: %d matching types found in pacakge %s\n",
+				"info: %d matching types found in package %s\n",
 				n,
 				pkg.name,
 			)
@@ -298,7 +315,7 @@ func main() {
 
 		if n := len(remainingTypes); n > 0 {
 			verbose.Printf(
-				"info: %d remaining types after processing pacakge %s\n",
+				"info: %d remaining types after processing package %s\n",
 				n,
 				pkg.name,
 			)
@@ -328,12 +345,25 @@ func main() {
 			outFileName = filepath.Join(in.outDir, defaultFileName(pkg, foundTypes[0]))
 		}
 		verbose.Printf(
-			"info: writing output to file %s after processing pacakge %s\n",
+			"info: writing output to file %s after processing package %s\n",
 			outFileName,
 			pkg.name,
 		)
 		if err := os.WriteFile(outFileName, src, 0644); err != nil {
 			log.Fatalf("error: failed to write to out file: %s", err)
+		}
+
+		// Write the companion test file next to the generated code.
+		if in.genTests {
+			testFileName := testFileName(outFileName)
+			verbose.Printf(
+				"info: writing tests to file %s after processing package %s\n",
+				testFileName,
+				pkg.name,
+			)
+			if err := os.WriteFile(testFileName, g.formatTests(), 0644); err != nil {
+				log.Fatalf("error: failed to write to test out file: %s", err)
+			}
 		}
 	}
 
@@ -348,9 +378,11 @@ func main() {
 // Generator holds the state of the analysis.
 // Primarily used to buffer the output for format.Source.
 type Generator struct {
-	buf bytes.Buffer // Accumulated output.
-	pkg *Package     // Package we are scanning.
-	raw bool         // Generate self-contained code without the flagged dependency.
+	buf     bytes.Buffer // Accumulated output.
+	testBuf bytes.Buffer // Accumulated output for the companion _test.go file.
+	pkg     *Package     // Package we are scanning.
+	raw     bool         // Generate self-contained code without the flagged dependency.
+	tests   bool         // Also generate a companion _test.go file.
 }
 
 type Package struct {
@@ -461,7 +493,7 @@ func (pkg *Package) findStructTypeFile(sourceTypeName string) *File {
 	return nil
 }
 
-func (g *Generator) generateHeader(headerTmpl *template.Template) {
+func (g *Generator) generateHeader(headerTmpl, testHeaderTmpl *template.Template) {
 	// Print the header and package clause.
 	headerInput := templateHeaderInput{
 		CmdArgs:     strings.Join(os.Args[1:], " "),
@@ -471,12 +503,19 @@ func (g *Generator) generateHeader(headerTmpl *template.Template) {
 	if err := headerTmpl.Execute(&g.buf, headerInput); err != nil {
 		log.Fatalf("error: failed to generate header: %s", err)
 	}
+
+	if g.tests {
+		if err := testHeaderTmpl.Execute(&g.testBuf, headerInput); err != nil {
+			log.Fatalf("error: failed to generate test header: %s", err)
+		}
+	}
 }
 
 func (g *Generator) generateForStruct(
 	sourceTypeName string,
 	outTypeName string,
 	bodyTmpl *template.Template,
+	testBodyTmpl *template.Template,
 	structFile *File,
 ) {
 	// Make sure the flags size is within allowed limit.
@@ -531,17 +570,38 @@ func (g *Generator) generateForStruct(
 			err,
 		)
 	}
+
+	if g.tests {
+		if err := testBodyTmpl.Execute(&g.testBuf, tmplInput); err != nil {
+			log.Fatalf(
+				"error: failed to generate tests for type %s: %s",
+				sourceTypeName,
+				err,
+			)
+		}
+	}
 }
 
 // format returns the gofmt-ed contents of the Generator's buffer.
 func (g *Generator) format() []byte {
-	src, err := format.Source(g.buf.Bytes())
+	return formatSource(g.buf.Bytes())
+}
+
+// formatTests returns the gofmt-ed contents of the Generator's test buffer.
+func (g *Generator) formatTests() []byte {
+	return formatSource(g.testBuf.Bytes())
+}
+
+// formatSource gofmt's src, falling back to the raw bytes when it can't be
+// parsed so the user can compile it to see the underlying error.
+func formatSource(src []byte) []byte {
+	out, err := format.Source(src)
 	if err != nil {
 		// Should never happen, but can arise when developing this code.
 		// The user can compile the output to see the error.
 		log.Printf("warning: internal error: invalid Go generated: %s", err)
 		log.Printf("warning: compile the package to analyze the error")
-		return g.buf.Bytes()
+		return src
 	}
-	return src
+	return out
 }

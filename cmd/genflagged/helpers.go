@@ -20,6 +20,18 @@ func defaultOutTypeName(sourceTypeName string) string {
 	return sourceTypeName + "BitFlags"
 }
 
+// testFileName derives the companion test file name from the generated
+// output file name, e.g. "options_flagged.go" -> "options_flagged_test.go".
+// When the output is itself a test file (source declared in tests), it uses
+// a "_gen_test.go" suffix to avoid colliding with the generated code file.
+func testFileName(outFileName string) string {
+	base := strings.TrimSuffix(outFileName, ".go")
+	if trimmed, ok := strings.CutSuffix(base, "_test"); ok {
+		return trimmed + "_gen_test.go"
+	}
+	return base + "_test.go"
+}
+
 // TODO: what happens if there's nothing left after applying both trimmings?
 func flagName(fieldName, trimPrefix, trimSuffix string) string {
 	fn := []byte(fieldName)

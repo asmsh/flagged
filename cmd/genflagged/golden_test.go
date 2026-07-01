@@ -24,6 +24,8 @@ var goldenFixtures = []string{
 	"max_options",
 	"multiple_types",
 	"raw_options",
+	"tested_options",
+	"raw_tested_options",
 }
 
 func TestGolden(t *testing.T) {
