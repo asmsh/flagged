@@ -21,7 +21,7 @@ jobs:
     # Test with all supported Go versions on all OSes
     strategy:
       matrix:
-        go: [ '1.25', '1.24' ]
+        go: [ '1.26', '1.25', '1.23' ]
         os: [ ubuntu-latest, windows-latest, macOS-latest ]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -53,6 +53,6 @@ jobs:
           amend: true
         if: |
           matrix.os == 'ubuntu-latest' &&
-          matrix.go == '1.25' &&
+          matrix.go == '1.26' &&
           github.event_name == 'push'
         continue-on-error: true
