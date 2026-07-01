@@ -115,73 +115,72 @@ func New[T BitFlags8 | BitFlags16 | BitFlags32 | BitFlags64](f T) *T {
 	return &f
 }
 
-func (f BitFlags8) Is(idx BitIndex) (set bool)               { return is(f, idx) }
-func (f *BitFlags8) Set(idx BitIndex) (old bool)             { return set(f, idx, true) }
-func (f *BitFlags8) Reset(idx BitIndex) (old bool)           { return set(f, idx, false) }
-func (f *BitFlags8) SetTo(idx BitIndex, new bool) (old bool) { return set(f, idx, new) }
-func (f *BitFlags8) Toggle(idx BitIndex) (new bool)          { return toggle(f, idx) }
+func (f BitFlags8) Is(idx BitIndex) (set bool)               { return is(f, 8, idx) }
+func (f *BitFlags8) Set(idx BitIndex) (old bool)             { return set(f, 8, idx, true) }
+func (f *BitFlags8) Reset(idx BitIndex) (old bool)           { return set(f, 8, idx, false) }
+func (f *BitFlags8) SetTo(idx BitIndex, new bool) (old bool) { return set(f, 8, idx, new) }
+func (f *BitFlags8) Toggle(idx BitIndex) (new bool)          { return toggle(f, 8, idx) }
 func (f *BitFlags8) SetAll()                                 { setAll(f) }
 func (f *BitFlags8) ResetAll()                               { resetAll(f) }
-func (f BitFlags8) AnySet() bool                             { return anySet(f) }
-func (f BitFlags8) AllSet() bool                             { return allSet(f) }
-func (f BitFlags8) AnyOf(idx ...BitIndex) bool               { return anySet(f, idx...) }
-func (f BitFlags8) AllOf(idx ...BitIndex) bool               { return allSet(f, idx...) }
+func (f BitFlags8) AnySet() bool                             { return anySet(f, 8) }
+func (f BitFlags8) AllSet() bool                             { return allSet(f, 8) }
+func (f BitFlags8) AnyOf(idx ...BitIndex) bool               { return anySet(f, 8, idx...) }
+func (f BitFlags8) AllOf(idx ...BitIndex) bool               { return allSet(f, 8, idx...) }
 func (BitFlags8) Size() int                                  { return 8 }
-func (f BitFlags8) String() string                           { return getBinaryString(f) }
-func (f BitFlags8) PrettyString() string                     { return getPrettyString(f) }
+func (f BitFlags8) String() string                           { return getBinaryString(f, 8) }
+func (f BitFlags8) PrettyString() string                     { return getPrettyString(f, 8) }
 func (f *BitFlags8) BitFlags() BitFlags                      { return f }
 
-func (f BitFlags16) Is(idx BitIndex) (set bool)               { return is(f, idx) }
-func (f *BitFlags16) Set(idx BitIndex) (old bool)             { return set(f, idx, true) }
-func (f *BitFlags16) Reset(idx BitIndex) (old bool)           { return set(f, idx, false) }
-func (f *BitFlags16) SetTo(idx BitIndex, new bool) (old bool) { return set(f, idx, new) }
-func (f *BitFlags16) Toggle(idx BitIndex) (new bool)          { return toggle(f, idx) }
+func (f BitFlags16) Is(idx BitIndex) (set bool)               { return is(f, 16, idx) }
+func (f *BitFlags16) Set(idx BitIndex) (old bool)             { return set(f, 16, idx, true) }
+func (f *BitFlags16) Reset(idx BitIndex) (old bool)           { return set(f, 16, idx, false) }
+func (f *BitFlags16) SetTo(idx BitIndex, new bool) (old bool) { return set(f, 16, idx, new) }
+func (f *BitFlags16) Toggle(idx BitIndex) (new bool)          { return toggle(f, 16, idx) }
 func (f *BitFlags16) SetAll()                                 { setAll(f) }
 func (f *BitFlags16) ResetAll()                               { resetAll(f) }
-func (f BitFlags16) AnySet() bool                             { return anySet(f) }
-func (f BitFlags16) AllSet() bool                             { return allSet(f) }
-func (f BitFlags16) AnyOf(idx ...BitIndex) bool               { return anySet(f, idx...) }
-func (f BitFlags16) AllOf(idx ...BitIndex) bool               { return allSet(f, idx...) }
+func (f BitFlags16) AnySet() bool                             { return anySet(f, 16) }
+func (f BitFlags16) AllSet() bool                             { return allSet(f, 16) }
+func (f BitFlags16) AnyOf(idx ...BitIndex) bool               { return anySet(f, 16, idx...) }
+func (f BitFlags16) AllOf(idx ...BitIndex) bool               { return allSet(f, 16, idx...) }
 func (BitFlags16) Size() int                                  { return 16 }
-func (f BitFlags16) String() string                           { return getBinaryString(f) }
-func (f BitFlags16) PrettyString() string                     { return getPrettyString(f) }
+func (f BitFlags16) String() string                           { return getBinaryString(f, 16) }
+func (f BitFlags16) PrettyString() string                     { return getPrettyString(f, 16) }
 func (f *BitFlags16) BitFlags() BitFlags                      { return f }
 
-func (f BitFlags32) Is(idx BitIndex) (set bool)               { return is(f, idx) }
-func (f *BitFlags32) Set(idx BitIndex) (old bool)             { return set(f, idx, true) }
-func (f *BitFlags32) Reset(idx BitIndex) (old bool)           { return set(f, idx, false) }
-func (f *BitFlags32) SetTo(idx BitIndex, new bool) (old bool) { return set(f, idx, new) }
-func (f *BitFlags32) Toggle(idx BitIndex) (new bool)          { return toggle(f, idx) }
+func (f BitFlags32) Is(idx BitIndex) (set bool)               { return is(f, 32, idx) }
+func (f *BitFlags32) Set(idx BitIndex) (old bool)             { return set(f, 32, idx, true) }
+func (f *BitFlags32) Reset(idx BitIndex) (old bool)           { return set(f, 32, idx, false) }
+func (f *BitFlags32) SetTo(idx BitIndex, new bool) (old bool) { return set(f, 32, idx, new) }
+func (f *BitFlags32) Toggle(idx BitIndex) (new bool)          { return toggle(f, 32, idx) }
 func (f *BitFlags32) SetAll()                                 { setAll(f) }
 func (f *BitFlags32) ResetAll()                               { resetAll(f) }
-func (f BitFlags32) AnySet() bool                             { return anySet(f) }
-func (f BitFlags32) AllSet() bool                             { return allSet(f) }
-func (f BitFlags32) AnyOf(idx ...BitIndex) bool               { return anySet(f, idx...) }
-func (f BitFlags32) AllOf(idx ...BitIndex) bool               { return allSet(f, idx...) }
+func (f BitFlags32) AnySet() bool                             { return anySet(f, 32) }
+func (f BitFlags32) AllSet() bool                             { return allSet(f, 32) }
+func (f BitFlags32) AnyOf(idx ...BitIndex) bool               { return anySet(f, 32, idx...) }
+func (f BitFlags32) AllOf(idx ...BitIndex) bool               { return allSet(f, 32, idx...) }
 func (BitFlags32) Size() int                                  { return 32 }
-func (f BitFlags32) String() string                           { return getBinaryString(f) }
-func (f BitFlags32) PrettyString() string                     { return getPrettyString(f) }
+func (f BitFlags32) String() string                           { return getBinaryString(f, 32) }
+func (f BitFlags32) PrettyString() string                     { return getPrettyString(f, 32) }
 func (f *BitFlags32) BitFlags() BitFlags                      { return f }
 
-func (f BitFlags64) Is(idx BitIndex) (set bool)               { return is(f, idx) }
-func (f *BitFlags64) Set(idx BitIndex) (old bool)             { return set(f, idx, true) }
-func (f *BitFlags64) Reset(idx BitIndex) (old bool)           { return set(f, idx, false) }
-func (f *BitFlags64) SetTo(idx BitIndex, new bool) (old bool) { return set(f, idx, new) }
-func (f *BitFlags64) Toggle(idx BitIndex) (new bool)          { return toggle(f, idx) }
+func (f BitFlags64) Is(idx BitIndex) (set bool)               { return is(f, 64, idx) }
+func (f *BitFlags64) Set(idx BitIndex) (old bool)             { return set(f, 64, idx, true) }
+func (f *BitFlags64) Reset(idx BitIndex) (old bool)           { return set(f, 64, idx, false) }
+func (f *BitFlags64) SetTo(idx BitIndex, new bool) (old bool) { return set(f, 64, idx, new) }
+func (f *BitFlags64) Toggle(idx BitIndex) (new bool)          { return toggle(f, 64, idx) }
 func (f *BitFlags64) SetAll()                                 { setAll(f) }
 func (f *BitFlags64) ResetAll()                               { resetAll(f) }
-func (f BitFlags64) AnySet() bool                             { return anySet(f) }
-func (f BitFlags64) AllSet() bool                             { return allSet(f) }
-func (f BitFlags64) AnyOf(idx ...BitIndex) bool               { return anySet(f, idx...) }
-func (f BitFlags64) AllOf(idx ...BitIndex) bool               { return allSet(f, idx...) }
+func (f BitFlags64) AnySet() bool                             { return anySet(f, 64) }
+func (f BitFlags64) AllSet() bool                             { return allSet(f, 64) }
+func (f BitFlags64) AnyOf(idx ...BitIndex) bool               { return anySet(f, 64, idx...) }
+func (f BitFlags64) AllOf(idx ...BitIndex) bool               { return allSet(f, 64, idx...) }
 func (BitFlags64) Size() int                                  { return 64 }
-func (f BitFlags64) String() string                           { return getBinaryString(f) }
-func (f BitFlags64) PrettyString() string                     { return getPrettyString(f) }
+func (f BitFlags64) String() string                           { return getBinaryString(f, 64) }
+func (f BitFlags64) PrettyString() string                     { return getPrettyString(f, 64) }
 func (f *BitFlags64) BitFlags() BitFlags                      { return f }
 
 type bitFlags interface {
 	BitFlags8 | BitFlags16 | BitFlags32 | BitFlags64
-	Size() int
 }
 
 type bitFlagsTypes interface {
@@ -218,18 +217,18 @@ func validateBitIndexSlow(size int, idx BitIndex) {
 	panic(panicStr.String())
 }
 
-func is[T bitFlags](f T, idx BitIndex) (set bool) {
-	validateBitIndex(f.Size(), idx)
-	return isUint(f, idx)
-}
-
 func isUint[T bitFlagsTypes](f T, idx BitIndex) (set bool) {
 	return (f & (1 << idx)) != 0
 }
 
-func set[T bitFlags](f *T, idx BitIndex, new bool) (old bool) {
-	validateBitIndex((*f).Size(), idx)
-	old = (*f & (1 << idx)) != 0
+func is[T bitFlags](f T, size int, idx BitIndex) (set bool) {
+	validateBitIndex(size, idx)
+	return isUint(f, idx)
+}
+
+func set[T bitFlags](f *T, size int, idx BitIndex, new bool) (old bool) {
+	validateBitIndex(size, idx)
+	old = isUint(*f, idx)
 	if new {
 		*f |= 1 << idx
 	} else {
@@ -238,10 +237,10 @@ func set[T bitFlags](f *T, idx BitIndex, new bool) (old bool) {
 	return
 }
 
-func toggle[T bitFlags](f *T, idx BitIndex) (new bool) {
-	validateBitIndex((*f).Size(), idx)
+func toggle[T bitFlags](f *T, size int, idx BitIndex) (new bool) {
+	validateBitIndex(size, idx)
 	*f ^= 1 << idx
-	return (*f & (1 << idx)) != 0
+	return isUint(*f, idx)
 }
 
 func setAll[T bitFlags](f *T) {
@@ -253,15 +252,14 @@ func resetAll[T bitFlags](f *T) {
 	*f = 0
 }
 
-func anySet[T bitFlags](f T, idx ...BitIndex) bool {
+func anySet[T bitFlagsTypes](f T, size int, idx ...BitIndex) bool {
 	if len(idx) == 0 {
 		return f != T(0)
 	}
-	return anySetSlow(f, idx...)
+	return anySetSlow(f, size, idx...)
 }
 
-func anySetSlow[T bitFlags](f T, idx ...BitIndex) bool {
-	size := f.Size()
+func anySetSlow[T bitFlagsTypes](f T, size int, idx ...BitIndex) bool {
 	foundSet := false
 	for _, bi := range idx {
 		validateBitIndex(size, bi)
@@ -272,15 +270,14 @@ func anySetSlow[T bitFlags](f T, idx ...BitIndex) bool {
 	return foundSet
 }
 
-func allSet[T bitFlags](f T, idx ...BitIndex) bool {
+func allSet[T bitFlagsTypes](f T, size int, idx ...BitIndex) bool {
 	if len(idx) == 0 {
 		return f == ^T(0)
 	}
-	return allSetSlow(f, idx...)
+	return allSetSlow(f, size, idx...)
 }
 
-func allSetSlow[T bitFlags](f T, idx ...BitIndex) bool {
-	size := f.Size()
+func allSetSlow[T bitFlagsTypes](f T, size int, idx ...BitIndex) bool {
 	foundUnset := true
 	for _, bi := range idx {
 		validateBitIndex(size, bi)
@@ -291,8 +288,7 @@ func allSetSlow[T bitFlags](f T, idx ...BitIndex) bool {
 	return foundUnset
 }
 
-func getBinaryString[T bitFlags](f T) string {
-	size := f.Size()
+func getBinaryString[T bitFlagsTypes](f T, size int) string {
 	str := make(stringBuilder, 0, size)
 	for i := range size {
 		if (f & (1 << (size - i - 1))) != 0 {
@@ -305,8 +301,7 @@ func getBinaryString[T bitFlags](f T) string {
 }
 
 // getPrettyString prints f like "O|I|O|O|O|I|O|O_O|I|O|O|O|I|O|O"
-func getPrettyString[T bitFlags](f T) string {
-	size := f.Size()
+func getPrettyString[T bitFlagsTypes](f T, size int) string {
 	str := make(stringBuilder, 0, size+(size-1)+(size/8-1))
 	for i := range size {
 		if (f & (1 << (size - i - 1))) != 0 {

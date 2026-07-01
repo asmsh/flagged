@@ -64,7 +64,7 @@ func helperRunTestIs[T bitFlags, TP ptrBitFlags[T]](t *testing.T) {
 	var (
 		zero   T
 		allset = ^zero
-		size   = zero.Size()
+		size   = TP(&zero).Size()
 	)
 	type testRun struct {
 		bitIndex int
@@ -197,7 +197,7 @@ func helperRunTestSet[T bitFlags, TP ptrBitFlags[T]](t *testing.T) {
 	var (
 		zero   T
 		allset = ^zero
-		size   = zero.Size()
+		size   = TP(&zero).Size()
 	)
 	type testRun struct {
 		bitIndex int
@@ -344,7 +344,7 @@ func helperRunTestReset[T bitFlags, TP ptrBitFlags[T]](t *testing.T) {
 	var (
 		zero   T
 		allset = ^zero
-		size   = zero.Size()
+		size   = TP(&zero).Size()
 	)
 	type testRun struct {
 		bitIndex int
@@ -491,7 +491,7 @@ func helperRunTestToggle[T bitFlags, TP ptrBitFlags[T]](t *testing.T) {
 	var (
 		zero   T
 		allset = ^zero
-		size   = zero.Size()
+		size   = TP(&zero).Size()
 	)
 	type testRun struct {
 		bitIndex int
@@ -866,7 +866,7 @@ func helperRunTestAnyOf[T bitFlags, TP ptrBitFlags[T]](t *testing.T) {
 	var (
 		zero   T
 		allset = ^zero
-		size   = zero.Size()
+		size   = TP(&zero).Size()
 	)
 	type testRun struct {
 		bitIndex []int
@@ -1010,7 +1010,7 @@ func helperRunTestAllOf[T bitFlags, TP ptrBitFlags[T]](t *testing.T) {
 	var (
 		zero   T
 		allset = ^zero
-		size   = zero.Size()
+		size   = TP(&zero).Size()
 	)
 	type testRun struct {
 		bitIndex []int

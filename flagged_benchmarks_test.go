@@ -9,7 +9,7 @@ func helperRunBenchmarkIs[T bitFlags, TP ptrBitFlags[T]](b *testing.B) {
 	var (
 		zero   T
 		allset = ^zero
-		size   = zero.Size()
+		size   = TP(&zero).Size()
 	)
 	type testCase struct {
 		name     string
@@ -62,7 +62,7 @@ func helperRunBenchmarkSet[T bitFlags, TP ptrBitFlags[T]](b *testing.B) {
 	var (
 		zero   T
 		allset = ^zero
-		size   = zero.Size()
+		size   = TP(&zero).Size()
 	)
 	type testCase struct {
 		name     string
@@ -115,7 +115,7 @@ func helperRunBenchmarkToggle[T bitFlags, TP ptrBitFlags[T]](b *testing.B) {
 	var (
 		zero   T
 		allset = ^zero
-		size   = zero.Size()
+		size   = TP(&zero).Size()
 	)
 	type testCase struct {
 		name     string
@@ -168,7 +168,7 @@ func helperRunBenchmarkAnyOf[T bitFlags, TP ptrBitFlags[T]](b *testing.B) {
 	var (
 		zero   T
 		allset = ^zero
-		size   = zero.Size()
+		size   = TP(&zero).Size()
 	)
 	type testCase struct {
 		name     string
@@ -231,7 +231,7 @@ func helperRunBenchmarkAllOf[T bitFlags, TP ptrBitFlags[T]](b *testing.B) {
 	var (
 		zero   T
 		allset = ^zero
-		size   = zero.Size()
+		size   = TP(&zero).Size()
 	)
 	type testCase struct {
 		name     string
