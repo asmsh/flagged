@@ -17,6 +17,8 @@ It uses the [github.com/asmsh/flagged](https://pkg.go.dev/github.com/asmsh/flagg
 * Auto-selects optimal `uint` size (`uint8`, `uint16`, `uint32`, `uint64`) to fit fields, with optional override.
 * Creates 5 methods per field: `Is<Field>()`, `Set<Field>()`, `Reset<Field>()`, `Set<Field>To(bool)`, `Toggle<Field>()`.
 * Also generates general methods: `BitFlags()`, `Clone()`, `TypedFlags()`, `SetTypedFlags()`.
+* Optionally generates self-contained code (`-raw`) that depends only on builtin `uint` types (`uint8`, `uint16`, `uint32`, `uint64`), with no external dependencies or imports.
+* Optionally generates a companion `_test.go` file (`-tests`) with tests for the generated types.
 
 ### Installation:
 
@@ -48,6 +50,8 @@ genflagged [flags] -type T files... # Must be a single package
 | `-trimprefix` | Trim prefix from bool field names before generating methods.                                                                                                                       |
 | `-trimsuffix` | Trim suffix from bool field names before generating methods.                                                                                                                       |
 | `-tags`       | Build tags to be applied during processing.                                                                                                                                        |
+| `-raw`        | Generate self-contained code that depends only on builtin `uint` types (`uint8`, `uint16`, `uint32`, `uint64`), with no external dependencies or imports; omits the `BitFlags()` method. (default: `false`) |
+| `-tests`      | Also generate a companion `_test.go` file with tests for the generated types. (default: `false`)                                                                                    |
 | `-verbose`    | Enable extensive logging during processing.                                                                                                                                        |
 
 ### Example:
